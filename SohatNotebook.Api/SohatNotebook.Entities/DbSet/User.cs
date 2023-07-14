@@ -8,5 +8,6 @@
         public string Phone { get; set; }
         public DateTime DateOfBirth { get; set; }
         public string Country { get; set; }
+        public string Profession { get; set; }
     }
 }

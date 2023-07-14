@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SohatNotebook.DataService.Data;
 
@@ -11,9 +12,11 @@ using SohatNotebook.DataService.Data;
 namespace SohatNotebook.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230714115117_test")]
+    partial class test
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -54,10 +57,6 @@ namespace SohatNotebook.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Profession")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
@@ -71,15 +70,14 @@ namespace SohatNotebook.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("14f7a60c-bef3-4368-82c6-ae5b76a55aba"),
-                            AddedData = new DateTime(2023, 7, 14, 11, 58, 23, 734, DateTimeKind.Utc).AddTicks(372),
+                            Id = new Guid("1a958ef4-f414-498b-ad62-66a052747c9b"),
+                            AddedData = new DateTime(2023, 7, 14, 11, 51, 17, 540, DateTimeKind.Utc).AddTicks(4876),
                             Country = "france",
                             DateOfBirth = new DateTime(2023, 7, 14, 0, 0, 0, 0, DateTimeKind.Local),
                             Email = "alex@test.fr",
                             FirstName = "alex",
                             LastName = "rea",
                             Phone = "1234",
-                            Profession = "developper",
                             Status = 1,
                             UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
                         });

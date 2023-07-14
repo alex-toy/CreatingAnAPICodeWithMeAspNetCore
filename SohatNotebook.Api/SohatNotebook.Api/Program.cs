@@ -10,11 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    string connectionString = builder.Configuration.GetConnectionString("ConnectionString");
-    options.UseSqlServer(connectionString, b => b.MigrationsAssembly("SohatNotebook.Api"));
-});
+string DefaultConnectionString = builder.Configuration["ConnectionStrings:DefaultConnection"];
+builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(DefaultConnectionString, b => b.MigrationsAssembly("SohatNotebook.Api")));
 
 var app = builder.Build();
 
