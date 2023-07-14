@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using SohatNotebook.DataService.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +9,12 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    string connectionString = builder.Configuration.GetConnectionString("ConnectionString");
+    options.UseSqlServer(connectionString, b => b.MigrationsAssembly("SohatNotebook.Api"));
+});
 
 var app = builder.Build();
 
