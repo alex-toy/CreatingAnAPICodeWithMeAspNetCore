@@ -1,6 +1,8 @@
-﻿namespace SohatNotebook.Entities.DbSet
+﻿using SohatNotebook.Entities.DbSet;
+
+namespace SohatNotebook.Entities.Dto.Incoming
 {
-    public class User : BaseEntity
+    public class UserDto : BaseEntity
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }

@@ -1,25 +1,26 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using SohatNotebook.Entities.DbSet;
+using SohatNotebook.Entities.Dto.Incoming;
 
 namespace SohatNotebook.DataService.Data
 {
     public class AppDbContext : IdentityDbContext
     {
-        public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<UserDb> Users { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
-        public DbSet<User> User { get; set; }
+        public DbSet<UserDb> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
 
-            modelBuilder.Entity<User>().HasData(new User
+            modelBuilder.Entity<UserDb>().HasData(new UserDb
             {
                 Id = Guid.NewGuid(),
                 FirstName = "alex",
