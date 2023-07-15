@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using SohatNotebook.Entities.DbSet;
 
 namespace SohatNotebook.DataService.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext : IdentityDbContext
     {
         public virtual DbSet<User> Users { get; set; }
 
@@ -27,7 +28,8 @@ namespace SohatNotebook.DataService.Data
                 Phone = "1234",
                 DateOfBirth = DateTime.Today,
                 Country = "france",
-                Profession = "developper"
+                Profession = "developper",
+                Hobby = "coding"
             });
         }
     }

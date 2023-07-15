@@ -9,5 +9,6 @@
         public DateTime DateOfBirth { get; set; }
         public string Country { get; set; }
         public string Profession { get; set; }
+        public string Hobby { get; set; }
     }
 }
