@@ -1,21 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
 using SohatNotebook.DataService.Configuration;
-using SohatNotebook.DataService.Data;
 using SohatNotebook.Entities.DbSet;
 using SohatNotebook.Entities.Dto.Incoming;
 
-namespace SohatNotebook.Api.Controllers
+namespace SohatNotebook.Api.Controllers.v1
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
-        private readonly ILogger<UserController> _logger;
-        private readonly IUnitOfWork _unitOfWork;
-
-        public UserController(IUnitOfWork unitOfWork)
+        public UserController(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-            _unitOfWork = unitOfWork;
         }
 
         [Route("getall")]
