@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 using SohatNotebook.DataService.Data;
 using SohatNotebook.Entities.DbSet;
 
@@ -13,9 +14,10 @@ namespace SohatNotebook.DataService.Repository.Users
             _logger = logger;
         }
 
-        public Task<bool> Add(UserDb entity)
+        public Task<bool> Add(UserDb userDb)
         {
-            throw new NotImplementedException();
+            _dbSet.Add(userDb);
+            return Task.FromResult(true);
         }
 
         public Task<bool> Delete(Guid id, string userId)
@@ -23,14 +25,38 @@ namespace SohatNotebook.DataService.Repository.Users
             throw new NotImplementedException();
         }
 
-        public Task<IEnumerable<UserDb>> GetAll()
+        public override async Task<IEnumerable<UserDb>> GetAll()
         {
-            throw new NotImplementedException();
+            try
+            {
+                List<UserDb>? userDbs = _dbSet.Where(u => u.Status == 1).ToList();
+                return userDbs; 
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return Enumerable.Empty<UserDb>();
+            }
         }
 
-        public Task<UserDb> GetById(Guid id)
+        public Task<UserDb> GetById(Guid userId)
         {
-            throw new NotImplementedException();
+            UserDb? userDb = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+            return Task.FromResult(userDb); ;
+        }
+
+        public Task<UserDb> GetByEmail(string email)
+        {
+            try
+            {
+                Task<UserDb?> userDbs = _dbSet.FirstOrDefaultAsync(u => u.Status == 1 && u.Email == email);
+                return userDbs;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return (Task<UserDb>)Enumerable.Empty<UserDb>();
+            }
         }
 
         public Task<bool> Upsert(UserDb entity)

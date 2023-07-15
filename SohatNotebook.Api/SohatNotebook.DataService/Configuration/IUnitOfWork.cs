@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SohatNotebook.DataService.Repository.Users;
 
 namespace SohatNotebook.DataService.Configuration
 {
     public interface IUnitOfWork
     {
+        IUserRepository Users { get; }
 
+        Task CompleteAsync();
     }
 }

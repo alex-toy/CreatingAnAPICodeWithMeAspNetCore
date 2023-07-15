@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using SohatNotebook.DataService.Configuration;
 using SohatNotebook.DataService.Data;
 using SohatNotebook.Entities.DbSet;
 using SohatNotebook.Entities.Dto.Incoming;
@@ -10,38 +11,46 @@ namespace SohatNotebook.Api.Controllers
     public class UserController : ControllerBase
     {
         private readonly ILogger<UserController> _logger;
-        private readonly AppDbContext _appDbContext;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public UserController(ILogger<UserController> logger, AppDbContext appDbContext)
+        public UserController(IUnitOfWork unitOfWork)
         {
-            _logger = logger;
-            _appDbContext = appDbContext;
+            _unitOfWork = unitOfWork;
         }
 
         [Route("getall")]
         [HttpGet()]
         public IActionResult GetAll()
         {
-            List<UserDb>? userDbs = _appDbContext.Users.Where(u => u.Status == 1).ToList();
+            Task<IEnumerable<UserDb>>? userDbs = _unitOfWork.Users.GetAll();
             return Ok(userDbs);
         }
 
         [Route("getbyid")]
         [HttpGet()]
-        public IActionResult GetById(Guid userId)
+        public async Task<IActionResult> GetById(Guid userId)
         {
-            UserDb? userDb = _appDbContext.Users.FirstOrDefault(u => u.Id == userId);
+            UserDb? userDb = await _unitOfWork.Users.GetById(userId);
             return Ok(userDb);
         }
 
-        [Route("add")]
+        [Route("getbyemail")]
+        [HttpGet()]
+        public async Task<IActionResult> GetByEmail(string email)
+        {
+            UserDb? userDb = await _unitOfWork.Users.GetByEmail(email);
+            return Ok(userDb);
+        }
+
+        [Route("adduser")]
         [HttpPost()]
         public IActionResult Add(UserDto userDto)
         {
-            UserDb user = Map(userDto);
-            _appDbContext.Users.Add(user);
-            _appDbContext.SaveChanges();
-            return Ok();
+            UserDb userDb = Map(userDto);
+            _unitOfWork.Users.Add(userDb);
+            _unitOfWork.CompleteAsync();
+            Guid userId = _unitOfWork.Users.GetByEmail(userDto.Email).GetAwaiter().GetResult().Id;
+            return CreatedAtRoute("getbyid", userId);
         }
 
         private static UserDb Map(UserDto userDto)
