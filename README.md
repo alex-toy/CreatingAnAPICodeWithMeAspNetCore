@@ -10,3 +10,11 @@ dotnet new webapi -n SohatNotebook.Api
 Add-Migration InitialCreate
 Update-Database
 ```
+
+## Adding JWT Authentication
+
+### Add Packages
+```
+Microsoft.AspNetCore.Authentication.JwtBearer
+Microsoft.AspNetCore.Identity.EntityFrameworkCore
+```

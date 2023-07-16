@@ -1,7 +1,11 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using SohatNotebook.Api.Configuration.Models;
 using SohatNotebook.DataService.Configuration;
 using SohatNotebook.DataService.Data;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +21,26 @@ builder.Services.AddApiVersioning(options =>
     options.ReportApiVersions = true;
     options.AssumeDefaultVersionWhenUnspecified = true;
     options.DefaultApiVersion = ApiVersion.Default;
+});
+
+IConfigurationSection? jwtConfig = builder.Configuration.GetSection("JwtConfig");
+builder.Services.Configure<JwtConfig>(jwtConfig);
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(jwt =>
+{
+    string secret = builder.Configuration["JwtConfig:Secret"];
+    var key = Encoding.ASCII.GetBytes(secret);
+    jwt.SaveToken = true;
+    var tokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key)
+    };
+    jwt.TokenValidationParameters = tokenValidationParameters;
 });
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
