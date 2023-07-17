@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using SohatNotebook.Api.Configuration.Models;
+using SohatNotebook.Authentication.Configuration;
 using SohatNotebook.DataService.Configuration;
 using SohatNotebook.DataService.Data;
 using System.Text;

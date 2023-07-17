@@ -1,4 +1,4 @@
-﻿namespace SohatNotebook.Api.Configuration.Models
+﻿namespace SohatNotebook.Authentication.Configuration
 {
     public class JwtConfig
     {
