@@ -12,8 +12,8 @@ using SohatNotebook.DataService.Data;
 namespace SohatNotebook.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20230714072532_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230717085107_v1")]
+    partial class v1
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -170,10 +170,12 @@ namespace SohatNotebook.Api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -210,10 +212,12 @@ namespace SohatNotebook.Api.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -223,7 +227,7 @@ namespace SohatNotebook.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SohatNotebook.Entities.DbSet.User", b =>
+            modelBuilder.Entity("SohatNotebook.Entities.DbSet.UserDb", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -247,11 +251,19 @@ namespace SohatNotebook.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Hobby")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Profession")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -263,7 +275,24 @@ namespace SohatNotebook.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("UserDb");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("c5b9e5dc-b5a2-49eb-832d-5b1dae1c6b36"),
+                            AddedData = new DateTime(2023, 7, 17, 8, 51, 6, 900, DateTimeKind.Utc).AddTicks(5915),
+                            Country = "france",
+                            DateOfBirth = new DateTime(2023, 7, 17, 0, 0, 0, 0, DateTimeKind.Local),
+                            Email = "alex@test.fr",
+                            FirstName = "alex",
+                            Hobby = "coding",
+                            LastName = "rea",
+                            Phone = "1234",
+                            Profession = "developper",
+                            Status = 1,
+                            UpdateDate = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified)
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

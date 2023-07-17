@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SohatNotebook.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class v1 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -51,7 +51,7 @@ namespace SohatNotebook.Api.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "UserDb",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -61,13 +61,15 @@ namespace SohatNotebook.Api.Migrations
                     Phone = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Country = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Profession = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Hobby = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     AddedData = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdateDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_UserDb", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -116,8 +118,8 @@ namespace SohatNotebook.Api.Migrations
                 name: "AspNetUserLogins",
                 columns: table => new
                 {
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    ProviderKey = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    ProviderKey = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     ProviderDisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
@@ -161,8 +163,8 @@ namespace SohatNotebook.Api.Migrations
                 columns: table => new
                 {
                     UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    LoginProvider = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LoginProvider = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
                     Value = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -175,6 +177,11 @@ namespace SohatNotebook.Api.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.InsertData(
+                table: "UserDb",
+                columns: new[] { "Id", "AddedData", "Country", "DateOfBirth", "Email", "FirstName", "Hobby", "LastName", "Phone", "Profession", "Status", "UpdateDate" },
+                values: new object[] { new Guid("c5b9e5dc-b5a2-49eb-832d-5b1dae1c6b36"), new DateTime(2023, 7, 17, 8, 51, 6, 900, DateTimeKind.Utc).AddTicks(5915), "france", new DateTime(2023, 7, 17, 0, 0, 0, 0, DateTimeKind.Local), "alex@test.fr", "alex", "coding", "rea", "1234", "developper", 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified) });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -235,7 +242,7 @@ namespace SohatNotebook.Api.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "UserDb");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");

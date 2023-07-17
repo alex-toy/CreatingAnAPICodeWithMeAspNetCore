@@ -167,10 +167,12 @@ namespace SohatNotebook.Api.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderKey")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("nvarchar(max)");
@@ -207,10 +209,12 @@ namespace SohatNotebook.Api.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("LoginProvider")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
 
                     b.Property<string>("Value")
                         .HasColumnType("nvarchar(max)");
@@ -248,6 +252,9 @@ namespace SohatNotebook.Api.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("IdentityId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -273,13 +280,14 @@ namespace SohatNotebook.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("601481f6-8fce-4e14-85fd-b1fc720bb955"),
-                            AddedData = new DateTime(2023, 7, 15, 7, 5, 4, 2, DateTimeKind.Utc).AddTicks(5626),
+                            Id = new Guid("a4d897e2-d6e8-444d-8c68-0e2fd9c3e749"),
+                            AddedData = new DateTime(2023, 7, 17, 8, 56, 2, 596, DateTimeKind.Utc).AddTicks(5247),
                             Country = "france",
-                            DateOfBirth = new DateTime(2023, 7, 15, 0, 0, 0, 0, DateTimeKind.Local),
+                            DateOfBirth = new DateTime(2023, 7, 17, 0, 0, 0, 0, DateTimeKind.Local),
                             Email = "alex@test.fr",
                             FirstName = "alex",
                             Hobby = "coding",
+                            IdentityId = new Guid("00000000-0000-0000-0000-000000000000"),
                             LastName = "rea",
                             Phone = "1234",
                             Profession = "developper",
