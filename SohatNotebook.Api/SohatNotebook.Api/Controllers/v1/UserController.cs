@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SohatNotebook.DataService.Configuration;
 using SohatNotebook.Entities.DbSet;
@@ -5,6 +7,7 @@ using SohatNotebook.Entities.Dto.Incoming;
 
 namespace SohatNotebook.Api.Controllers.v1
 {
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : BaseController
     {
         public UserController(IUnitOfWork unitOfWork) : base(unitOfWork)
