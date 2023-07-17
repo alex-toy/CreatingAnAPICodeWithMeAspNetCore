@@ -17,4 +17,5 @@ Update-Database
 ```
 Microsoft.AspNetCore.Authentication.JwtBearer
 Microsoft.AspNetCore.Identity.EntityFrameworkCore
+Microsoft.AspNetCore.Identity.UI
 ```
