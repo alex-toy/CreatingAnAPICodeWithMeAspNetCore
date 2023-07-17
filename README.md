@@ -19,3 +19,8 @@ Microsoft.AspNetCore.Authentication.JwtBearer
 Microsoft.AspNetCore.Identity.EntityFrameworkCore
 Microsoft.AspNetCore.Identity.UI
 ```
+
+### Register a user
+
+<img src="/pictures/register.png" title="register a user"  width="900">
+<img src="/pictures/register1.png" title="register a user"  width="900">
