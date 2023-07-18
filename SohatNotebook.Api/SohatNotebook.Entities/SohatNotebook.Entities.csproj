@@ -10,4 +10,8 @@
     <Folder Include="Dto\Outcoming\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="6.0.20" />
+  </ItemGroup>
+
 </Project>

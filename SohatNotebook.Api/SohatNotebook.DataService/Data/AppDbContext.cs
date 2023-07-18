@@ -8,6 +8,7 @@ namespace SohatNotebook.DataService.Data
     public class AppDbContext : IdentityDbContext
     {
         public virtual DbSet<UserDb> Users { get; set; }
+        public virtual DbSet<RefreshTokenDb> RefreshTokens { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

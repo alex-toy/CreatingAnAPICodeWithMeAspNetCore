@@ -36,3 +36,12 @@ Microsoft.AspNetCore.Identity.UI
 You need to get a token to be authorized to retrieve data from the user controller
 
 <img src="/pictures/authorize2.png" title="authorize"  width="900">
+
+### Refresh Token
+
+Add package in *Entities*
+```
+Microsoft.AspNetCore.Identity.UI
+```
+
+<img src="/pictures/refresh.png" title="refresh token"  width="900">

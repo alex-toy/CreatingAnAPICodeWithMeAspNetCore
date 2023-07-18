@@ -111,7 +111,7 @@ namespace SohatNotebook.Api.Controllers.v1
             var tokenDescriptor = new SecurityTokenDescriptor()
             {
                 Subject = GetClaims(identityUser),
-                Expires = DateTime.UtcNow.AddHours(1),
+                Expires = DateTime.UtcNow.Add(_jwtConfig.ExpiryTimeFrame),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

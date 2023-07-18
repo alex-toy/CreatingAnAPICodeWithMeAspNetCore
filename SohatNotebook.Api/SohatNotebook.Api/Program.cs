@@ -24,6 +24,20 @@ builder.Services.AddApiVersioning(options =>
     options.DefaultApiVersion = ApiVersion.Default;
 });
 
+string secret = builder.Configuration["JwtConfig:Secret"];
+var key = Encoding.ASCII.GetBytes(secret);
+var tokenValidationParameters = new TokenValidationParameters
+{
+    ValidateIssuerSigningKey = true,
+    IssuerSigningKey = new SymmetricSecurityKey(key),
+    ValidateIssuer = false,
+    ValidateAudience = false,
+    RequireExpirationTime = false,
+    ValidateLifetime = true,
+};
+
+builder.Services.AddSingleton(tokenValidationParameters);
+
 IConfigurationSection? jwtConfig = builder.Configuration.GetSection("JwtConfig");
 builder.Services.Configure<JwtConfig>(jwtConfig);
 builder.Services.AddAuthentication(options =>
@@ -33,18 +47,8 @@ builder.Services.AddAuthentication(options =>
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(jwt =>
 {
-    string secret = builder.Configuration["JwtConfig:Secret"];
-    var key = Encoding.ASCII.GetBytes(secret);
     jwt.SaveToken = true;
-    jwt.TokenValidationParameters = new TokenValidationParameters()
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(key),
-        ValidateIssuer = false,
-        ValidateAudience = false,
-        RequireExpirationTime = false,
-        ValidateLifetime = true,
-    };
+    jwt.TokenValidationParameters = tokenValidationParameters;
 });
 
 builder.Services
