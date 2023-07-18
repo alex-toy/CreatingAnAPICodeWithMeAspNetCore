@@ -45,3 +45,4 @@ Microsoft.AspNetCore.Identity.UI
 ```
 
 <img src="/pictures/refresh.png" title="refresh token"  width="900">
+<img src="/pictures/refresh2.png" title="refresh token"  width="900">
