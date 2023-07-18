@@ -33,14 +33,14 @@ namespace SohatNotebook.Api.Controllers.v1
         [HttpPost()]
         public async Task<IActionResult> Register([FromBody] UserRegistrationRequestDto userRegistrationRequestDto)
         {
-            if (!ModelState.IsValid) return BadRequest(new UserRegistrationResponse()
+            if (!ModelState.IsValid) return BadRequest(new UserRegistrationResponseDto()
             {
                 Success = false,
                 Errors = new List<string>() { "Invalid payload" }
             });
 
             IdentityUser? user = await _userManager.FindByEmailAsync(userRegistrationRequestDto.Email);
-            if (user != null) return BadRequest(new UserRegistrationResponse()
+            if (user != null) return BadRequest(new UserRegistrationResponseDto()
             {
                 Success = false,
                 Errors = new List<string>() { "email already in use" }
@@ -54,7 +54,7 @@ namespace SohatNotebook.Api.Controllers.v1
             };
 
             IdentityResult? identityResult = await _userManager.CreateAsync(newUser, userRegistrationRequestDto.Password);
-            if (!identityResult.Succeeded) return BadRequest(new UserRegistrationResponse()
+            if (!identityResult.Succeeded) return BadRequest(new UserRegistrationResponseDto()
             {
                 Success = false,
                 Errors = identityResult.Errors.Select(e => e.Description).ToList()
@@ -66,7 +66,7 @@ namespace SohatNotebook.Api.Controllers.v1
 
             var token = await GenerateJwtToken(newUser);
 
-            return Ok(new UserRegistrationResponse()
+            return Ok(new UserRegistrationResponseDto()
             {
                 Success = true,
                 Token = token.JwtToken,
@@ -78,7 +78,7 @@ namespace SohatNotebook.Api.Controllers.v1
         [HttpPost()]
         public async Task<IActionResult> Login([FromBody] UserLoginRequestDto userLoginRequestDto)
         {
-            if (!ModelState.IsValid) return BadRequest(new UserRegistrationResponse()
+            if (!ModelState.IsValid) return BadRequest(new UserRegistrationResponseDto()
             {
                 Success = false,
                 Errors = new List<string>() { "Invalid payload" }
@@ -106,6 +106,124 @@ namespace SohatNotebook.Api.Controllers.v1
                 Token = token.JwtToken,
                 RefreshToken = token.RefreshToken,
             });
+        }
+
+        [Route("refreshtoken")]
+        [HttpPost()]
+        public async Task<IActionResult> RefreshToken([FromBody] TokenRequestDto tokenRequestDto)
+        {
+            if (!ModelState.IsValid) return BadRequest(new UserRegistrationResponseDto()
+            {
+                Success = false,
+                Errors = new List<string>() { "Invalid payload" }
+            });
+
+            AuthResult authResult = await VerifyToken(tokenRequestDto);
+            if (authResult == null) return BadRequest(new UserRegistrationResponseDto()
+            {
+                Success = false,
+                Errors = new List<string>() { "token validation failed" }
+            });
+
+            return Ok(authResult);
+        }
+
+        private async Task<AuthResult> VerifyToken(TokenRequestDto tokenRequestDto)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            try
+            {
+                ClaimsPrincipal? principal = tokenHandler.ValidateToken(tokenRequestDto.Token, _tokenValidationParameters, out SecurityToken? validatedToken);
+                if (validatedToken is JwtSecurityToken jwtSecurityToken)
+                {
+                    const string hmacSha256 = SecurityAlgorithms.HmacSha256;
+                    StringComparison ignoreCase = StringComparison.InvariantCultureIgnoreCase;
+                    bool createdWithHmacSha256 = jwtSecurityToken.Header.Alg.Equals(hmacSha256, ignoreCase);
+                    if (!createdWithHmacSha256) return null;
+                }
+
+                string utcExpiryString = principal.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Exp).Value;
+                long utcExpiryLong = long.Parse(utcExpiryString);
+                DateTime expiryUtc = UnixTimeStampToDateTime(utcExpiryLong);
+                if (expiryUtc > DateTime.UtcNow) return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { "jwt token has not expired" }
+                };
+
+                RefreshTokenDb? refreshToken = await _unitOfWork.RefreshTokens.GetByRefreshToken(tokenRequestDto.RefreshToken);
+
+                if (refreshToken is null) return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { "invalid refresh token" }
+                };
+
+                if (refreshToken.ExpiryDate < DateTime.UtcNow) return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { "refresh token has expired, please login again" }
+                };
+
+                if (refreshToken.IsUsed) return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { "refresh token is already in use" }
+                };
+
+                if (refreshToken.IsRevoked) return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { "refresh token is revoked" }
+                };
+
+                string? jti = principal.Claims.SingleOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+                if (refreshToken.JwtId != jti) return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { "refresh token reference does not match the jwt token" }
+                };
+
+                refreshToken.IsUsed = true;
+                bool markedAsUsed = await _unitOfWork.RefreshTokens.MarkRefreshTokenAsUSed(refreshToken);
+                if (!markedAsUsed) return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { "error processing request" }
+                };
+
+                await _unitOfWork.CompleteAsync();
+                IdentityUser? userDb = await _userManager.FindByIdAsync(refreshToken.UserId);
+                if (userDb == null) return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { "error processing request" }
+                };
+
+                TokenData? token = await GenerateJwtToken(userDb);
+                return new AuthResult
+                {
+                    Token = token.JwtToken,
+                    RefreshToken = token.RefreshToken,
+                    Success = true,
+                };
+            }
+            catch (Exception ex)
+            {
+                return new AuthResult
+                {
+                    Success = false,
+                    Errors = new List<string>() { ex.Message }
+                };
+            }
+        }
+
+        private DateTime UnixTimeStampToDateTime(long unixDate)
+        {
+            var datetime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            datetime = datetime.AddSeconds(unixDate).ToUniversalTime();
+            return datetime;
         }
 
         private async Task<TokenData> GenerateJwtToken(IdentityUser identityUser)

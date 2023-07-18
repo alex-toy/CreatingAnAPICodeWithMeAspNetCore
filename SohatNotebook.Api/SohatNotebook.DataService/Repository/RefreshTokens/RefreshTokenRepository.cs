@@ -17,13 +17,43 @@ namespace SohatNotebook.DataService.Repository.RefreshTokens
         {
             try
             {
-                List<RefreshTokenDb>? userDbs = _dbSet.Where(u => u.Status == 1).ToList();
-                return userDbs;
+                List<RefreshTokenDb>? refreshTokenDbs = _dbSet.Where(u => u.Status == 1).ToList();
+                return refreshTokenDbs;
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
                 return Enumerable.Empty<RefreshTokenDb>();
+            }
+        }
+
+        public async Task<RefreshTokenDb> GetByRefreshToken(string refreshToken)
+        {
+            try
+            {
+                RefreshTokenDb? refreshTokenDb = _dbSet.FirstOrDefault(u => u.Token.ToLower() == refreshToken.ToLower());
+                return refreshTokenDb;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
+
+        public async Task<bool> MarkRefreshTokenAsUSed(RefreshTokenDb refreshToken)
+        {
+            try
+            {
+                RefreshTokenDb? refreshTokenDb = _dbSet.FirstOrDefault(u => u.Token.ToLower() == refreshToken.Token.ToLower());
+                if (refreshTokenDb == null) return false;
+                refreshTokenDb.IsUsed = true;
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
             }
         }
     }
