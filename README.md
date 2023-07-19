@@ -50,4 +50,11 @@ Microsoft.AspNetCore.Identity.UI
 <img src="/pictures/refresh4.png" title="refresh token"  width="900">
 <img src="/pictures/refresh5.png" title="refresh token"  width="900">
 
+
 ## AutoMapper
+
+### Add Packages
+```
+AutoMapper
+AutoMapper.Extensions.Microsoft.DependencyInjection
+```

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +13,10 @@ namespace SohatNotebook.Api.Controllers.v1
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class UserController : BaseController
     {
-        public UserController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager) : base(unitOfWork, userManager)
+        public UserController(IUnitOfWork unitOfWork,
+                              UserManager<IdentityUser> userManager,
+                              IMapper mapper) 
+            : base(unitOfWork, userManager, mapper)
         {
         }
 
@@ -37,7 +41,7 @@ namespace SohatNotebook.Api.Controllers.v1
                 return Ok(result);
             }
 
-            var okResult = new Result<UserDb>() { Content = userDb };
+            var okResult = new Result<UserDto>() { Content = _mapper.Map<UserDto>(userDb) };
             return Ok(okResult);
         }
 
@@ -50,38 +54,24 @@ namespace SohatNotebook.Api.Controllers.v1
             if (userDb == null)
             {
                 var result = new Result<UserDb>() { Error = SetError(400, ErrorMessages.UserNotFound, ErrorMessages.BadRequest) };
-                return Ok(result);
+                return BadRequest(result);
             }
 
-            var okResult = new Result<UserDb>() { Content = userDb };
-            return BadRequest(okResult);
+            var okResult = new Result<UserDto>() { Content = _mapper.Map<UserDto>(userDb) };
+            return Ok(okResult);
         }
 
         [Route("adduser")]
         [HttpPost()]
         public IActionResult Add(UserDto userDto)
         {
-            UserDb userDb = Map(userDto);
+            UserDb? userDb = _mapper.Map<UserDb>(userDto);
             _unitOfWork.Users.Add(userDb);
             _unitOfWork.CompleteAsync();
-            Guid userId = _unitOfWork.Users.GetByEmail(userDto.Email).GetAwaiter().GetResult().Id;
-            return CreatedAtRoute("getbyid", userId);
-        }
 
-        private static UserDb Map(UserDto userDto)
-        {
-            return new UserDb()
-            {
-                FirstName = userDto.FirstName,
-                LastName = userDto.LastName,
-                Email = userDto.Email,
-                Phone = userDto.Phone,
-                DateOfBirth = userDto.DateOfBirth,
-                Country = userDto.Country,
-                Profession = userDto.Profession,
-                Hobby = userDto.Hobby,
-                Status = 1
-            };
+            var result = new Result<UserDto>() { Content = userDto }; 
+            Guid userId = _unitOfWork.Users.GetByEmail(userDto.Email).GetAwaiter().GetResult().Id;
+            return CreatedAtAction("GetById", new { id = userId }, result);
         }
     }
 }

@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +13,9 @@ namespace SohatNotebook.Api.Controllers.v1
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class ProfileController : BaseController
     {
-        public ProfileController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager) : base(unitOfWork, userManager)
+        public ProfileController(IUnitOfWork unitOfWork,
+                                 IMapper mapper,
+                                 UserManager<IdentityUser> userManager) : base(unitOfWork, userManager, mapper)
         {
         }
 
@@ -38,7 +41,8 @@ namespace SohatNotebook.Api.Controllers.v1
                 return BadRequest(result);
             }
 
-            return Ok(profile);
+            var okResult = new Result<UserDto>() { Content = _mapper.Map<UserDto>(profile) };
+            return Ok(okResult);
         }
 
         [Route("updateprofile")]
