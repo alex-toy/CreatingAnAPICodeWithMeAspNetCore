@@ -80,6 +80,20 @@ namespace SohatNotebook.DataService.Repository.Users
             }
         }
 
+        public async Task<UserDb> GetByIdentityId(Guid identityId)
+        {
+            try
+            {
+                UserDb? user = await _dbSet.FirstOrDefaultAsync(u => u.Status == 1 && u.Id == identityId);
+                return user;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return null;
+            }
+        }
+
         private static void Map(UserDb userDb, ref UserDb user)
         {
             user.FirstName = userDb.FirstName;

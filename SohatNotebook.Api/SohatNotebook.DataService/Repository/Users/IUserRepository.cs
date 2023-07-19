@@ -6,5 +6,6 @@ namespace SohatNotebook.DataService.Repository.Users
     {
         Task<UserDb> GetByEmail(string email);
         Task<bool> Update(UserDb userDb);
+        Task<UserDb> GetByIdentityId(Guid id);
     }
 }
