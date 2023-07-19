@@ -11,5 +11,8 @@
         public string Country { get; set; }
         public string Profession { get; set; }
         public string Hobby { get; set; }
+        public string? Address { get; set; }
+        public string? MobileNumber { get; set; }
+        public string? Gender { get; set; }
     }
 }

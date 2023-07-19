@@ -277,6 +277,7 @@ namespace SohatNotebook.Api.Controllers.v1
             return new ClaimsIdentity( new[]
             {
                 new Claim("Id", identityUser.Id),
+                new Claim(ClaimTypes.NameIdentifier, identityUser.Id),
                 new Claim(JwtRegisteredClaimNames.Sub, identityUser.Email),
                 new Claim(JwtRegisteredClaimNames.Email, identityUser.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),

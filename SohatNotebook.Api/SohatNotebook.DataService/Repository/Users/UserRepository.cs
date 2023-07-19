@@ -63,5 +63,37 @@ namespace SohatNotebook.DataService.Repository.Users
         {
             throw new NotImplementedException();
         }
+
+        public async Task<bool> Update(UserDb userDb)
+        {
+            try
+            {
+                UserDb? user = await _dbSet.FirstOrDefaultAsync(u => u.Status == 1 && u.Id == userDb.Id);
+                if (user == null) return false;
+                Map(userDb, ref user);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return false;
+            }
+        }
+
+        private static void Map(UserDb userDb, ref UserDb user)
+        {
+            user.FirstName = userDb.FirstName;
+            user.LastName = userDb.LastName;
+            user.MobileNumber = userDb.MobileNumber;
+            user.Phone = userDb.Phone;
+            user.Gender = userDb.Gender;
+            user.Address = userDb.Address;
+            user.UpdateDate = DateTime.UtcNow;
+            user.Email = userDb.Email;
+            user.DateOfBirth = userDb.DateOfBirth;
+            user.Country = userDb.Country;
+            user.Profession = userDb.Profession;
+            user.Hobby = userDb.Hobby;
+        }
     }
 }
