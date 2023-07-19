@@ -63,6 +63,7 @@ namespace SohatNotebook.Api.Controllers.v1
 
             UserDb newProfile = await _unitOfWork.Users.GetByIdentityId(identityId);
 
+
             newProfile.Country = updateProfileDto.Country;
             newProfile.Address = updateProfileDto.Address;
             newProfile.MobileNumber = updateProfileDto.MobileNumber;
@@ -77,7 +78,8 @@ namespace SohatNotebook.Api.Controllers.v1
             }
 
             await _unitOfWork.CompleteAsync();
-            var okResult = new Result<UserDb>() { Content = newProfile, Error = null };
+            UserDto? temp = _mapper.Map<UserDto>(updateProfileDto);
+            var okResult = new Result<UserDto>() { Content = temp, Error = null };
             return Ok(okResult);
         }
     }

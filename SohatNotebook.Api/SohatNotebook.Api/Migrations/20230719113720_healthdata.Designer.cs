@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SohatNotebook.DataService.Data;
 
@@ -11,9 +12,11 @@ using SohatNotebook.DataService.Data;
 namespace SohatNotebook.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230719113720_healthdata")]
+    partial class healthdata
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -224,7 +227,7 @@ namespace SohatNotebook.Api.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("SohatNotebook.Entities.DbSet.HealthDataDb", b =>
+            modelBuilder.Entity("SohatNotebook.Entities.DbSet.HealthData", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -369,8 +372,8 @@ namespace SohatNotebook.Api.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("2d433337-e8ec-49fe-9b84-0b490db3249d"),
-                            AddedData = new DateTime(2023, 7, 19, 11, 50, 24, 137, DateTimeKind.Utc).AddTicks(9079),
+                            Id = new Guid("69dc5b78-944f-447a-8969-8e5ca7c9cf72"),
+                            AddedData = new DateTime(2023, 7, 19, 11, 37, 20, 200, DateTimeKind.Utc).AddTicks(6544),
                             Country = "france",
                             DateOfBirth = new DateTime(2023, 7, 19, 0, 0, 0, 0, DateTimeKind.Local),
                             Email = "alex@test.fr",
