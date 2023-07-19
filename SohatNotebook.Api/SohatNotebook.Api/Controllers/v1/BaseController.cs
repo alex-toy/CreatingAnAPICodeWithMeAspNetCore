@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SohatNotebook.DataService.Configuration;
+using SohatNotebook.Entities.Dto.Generics;
 
 namespace SohatNotebook.Api.Controllers.v1
 {
@@ -17,6 +18,11 @@ namespace SohatNotebook.Api.Controllers.v1
         {
             _unitOfWork = unitOfWork;
             _userManager = userManager;
+        }
+
+        protected Error SetError(int code, string message, string type)
+        {
+            return new Error() { Code = code, Message = message, Type = type };
         }
     }
 }

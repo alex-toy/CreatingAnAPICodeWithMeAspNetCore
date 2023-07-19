@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SohatNotebook.DataService.Configuration;
 using SohatNotebook.Entities.DbSet;
+using SohatNotebook.Entities.Dto.Generics;
 using SohatNotebook.Entities.Dto.Incoming;
 
 namespace SohatNotebook.Api.Controllers.v1
@@ -17,10 +18,11 @@ namespace SohatNotebook.Api.Controllers.v1
 
         [Route("getall")]
         [HttpGet()]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            Task<IEnumerable<UserDb>>? userDbs = _unitOfWork.Users.GetAll();
-            return Ok(userDbs);
+            IEnumerable<UserDb>? userDbs = await _unitOfWork.Users.GetAll();
+            var result = new PagedResult<UserDb>() { Content = userDbs.ToList(), ResultCount = userDbs.Count() };
+            return Ok(result);
         }
 
         [Route("getbyid")]
@@ -28,7 +30,15 @@ namespace SohatNotebook.Api.Controllers.v1
         public async Task<IActionResult> GetById(Guid userId)
         {
             UserDb? userDb = await _unitOfWork.Users.GetById(userId);
-            return Ok(userDb);
+
+            if (userDb == null)
+            {
+                var result = new Result<UserDb>() { Error = SetError(400, ErrorMessages.UserNotFound, ErrorMessages.BadRequest) };
+                return Ok(result);
+            }
+
+            var okResult = new Result<UserDb>() { Content = userDb };
+            return Ok(okResult);
         }
 
         [Route("getbyemail")]
@@ -36,7 +46,15 @@ namespace SohatNotebook.Api.Controllers.v1
         public async Task<IActionResult> GetByEmail(string email)
         {
             UserDb? userDb = await _unitOfWork.Users.GetByEmail(email);
-            return Ok(userDb);
+
+            if (userDb == null)
+            {
+                var result = new Result<UserDb>() { Error = SetError(400, ErrorMessages.UserNotFound, ErrorMessages.BadRequest) };
+                return Ok(result);
+            }
+
+            var okResult = new Result<UserDb>() { Content = userDb };
+            return BadRequest(okResult);
         }
 
         [Route("adduser")]

@@ -24,7 +24,7 @@ namespace SohatNotebook.Api.Controllers.v1
 
             if (loggedInUser == null)
             {
-                var result = new Result<UserDb>() { Error = new Error() { Code = 400, Message = "user not found", Type = "Bad Request" } };
+                var result = new Result<UserDb>() { Error = SetError(400, ErrorMessages.UserNotFound, ErrorMessages.BadRequest) };
                 return BadRequest(result);
             }
 
@@ -34,7 +34,7 @@ namespace SohatNotebook.Api.Controllers.v1
 
             if (profile == null)
             {
-                var result = new Result<UserDb>() { Error = new Error() { Code = 400, Message = "profile not found", Type = "Bad Request" } };
+                var result = new Result<UserDb>() { Error = SetError(400, ErrorMessages.ProfileNotFound, ErrorMessages.BadRequest) };
                 return BadRequest(result);
             }
 
@@ -51,7 +51,7 @@ namespace SohatNotebook.Api.Controllers.v1
 
             if (loggedInUser == null)
             {
-                var result = new Result<UserDb>() { Error = new Error() { Code = 400, Message = "user not found", Type = "Bad Request" } };
+                var result = new Result<UserDb>() { Error = SetError(400, ErrorMessages.UserNotFound, ErrorMessages.BadRequest) };
                 return BadRequest(result);
             }
 
@@ -68,12 +68,13 @@ namespace SohatNotebook.Api.Controllers.v1
 
             if (!isUpdated)
             {
-                var result = new Result<UserDb>() { Error = new Error() { Code = 400, Message = "error while updating", Type = "Bad Request" } };
+                var result = new Result<UserDb>() { Error = SetError(500, ErrorMessages.ErrorWhileUpdating, ErrorMessages.BadRequest)  };
                 return BadRequest(result);
             }
 
             await _unitOfWork.CompleteAsync();
-            return Ok(newProfile);
+            var okResult = new Result<UserDb>() { Content = newProfile, Error = null };
+            return Ok(okResult);
         }
     }
 }
