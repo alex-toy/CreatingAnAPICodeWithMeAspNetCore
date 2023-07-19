@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using SohatNotebook.DataService.Configuration;
 using SohatNotebook.Entities.DbSet;
+using SohatNotebook.Entities.Dto.Generics;
 using SohatNotebook.Entities.Dto.Incoming;
 
 namespace SohatNotebook.Api.Controllers.v1
@@ -21,13 +22,21 @@ namespace SohatNotebook.Api.Controllers.v1
         {
             IdentityUser? loggedInUser = await _userManager.GetUserAsync(HttpContext.User);
 
-            if (loggedInUser == null) return BadRequest("user not found");
+            if (loggedInUser == null)
+            {
+                var result = new Result<UserDb>() { Error = new Error() { Code = 400, Message = "user not found", Type = "Bad Request" } };
+                return BadRequest(result);
+            }
 
             var identityId = new Guid(loggedInUser.Id);
 
             UserDb profile = await _unitOfWork.Users.GetByIdentityId(identityId);
 
-            if (profile == null) return BadRequest("user not found");
+            if (profile == null)
+            {
+                var result = new Result<UserDb>() { Error = new Error() { Code = 400, Message = "profile not found", Type = "Bad Request" } };
+                return BadRequest(result);
+            }
 
             return Ok(profile);
         }
@@ -40,7 +49,11 @@ namespace SohatNotebook.Api.Controllers.v1
 
             IdentityUser? loggedInUser = await _userManager.GetUserAsync(HttpContext.User);
 
-            if (loggedInUser == null) return BadRequest("user not found");
+            if (loggedInUser == null)
+            {
+                var result = new Result<UserDb>() { Error = new Error() { Code = 400, Message = "user not found", Type = "Bad Request" } };
+                return BadRequest(result);
+            }
 
             var identityId = new Guid(loggedInUser.Id);
 
@@ -53,7 +66,11 @@ namespace SohatNotebook.Api.Controllers.v1
 
             bool isUpdated = await _unitOfWork.Users.Update(newProfile);
 
-            if (!isUpdated) return BadRequest("error while updating");
+            if (!isUpdated)
+            {
+                var result = new Result<UserDb>() { Error = new Error() { Code = 400, Message = "error while updating", Type = "Bad Request" } };
+                return BadRequest(result);
+            }
 
             await _unitOfWork.CompleteAsync();
             return Ok(newProfile);
