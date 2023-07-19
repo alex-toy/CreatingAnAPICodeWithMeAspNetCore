@@ -31,5 +31,32 @@ namespace SohatNotebook.Api.Controllers.v1
 
             return Ok(profile);
         }
+
+        [Route("updateprofile")]
+        [HttpPut()]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
+        {
+            if (!ModelState.IsValid) return BadRequest("invalid payload");
+
+            IdentityUser? loggedInUser = await _userManager.GetUserAsync(HttpContext.User);
+
+            if (loggedInUser == null) return BadRequest("user not found");
+
+            var identityId = new Guid(loggedInUser.Id);
+
+            UserDb newProfile = await _unitOfWork.Users.GetByIdentityId(identityId);
+
+            newProfile.Country = updateProfileDto.Country;
+            newProfile.Address = updateProfileDto.Address;
+            newProfile.MobileNumber = updateProfileDto.MobileNumber;
+            newProfile.Gender = updateProfileDto.Gender;
+
+            bool isUpdated = await _unitOfWork.Users.Update(newProfile);
+
+            if (!isUpdated) return BadRequest("error while updating");
+
+            await _unitOfWork.CompleteAsync();
+            return Ok(newProfile);
+        }
     }
 }

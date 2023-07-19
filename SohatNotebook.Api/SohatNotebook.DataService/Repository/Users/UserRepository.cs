@@ -84,7 +84,7 @@ namespace SohatNotebook.DataService.Repository.Users
         {
             try
             {
-                UserDb? user = await _dbSet.FirstOrDefaultAsync(u => u.Status == 1 && u.Id == identityId);
+                UserDb? user = await _dbSet.FirstOrDefaultAsync(u => u.Status == 1 && u.IdentityId == identityId);
                 return user;
             }
             catch (Exception ex)
