@@ -58,3 +58,13 @@ Microsoft.AspNetCore.Identity.UI
 AutoMapper
 AutoMapper.Extensions.Microsoft.DependencyInjection
 ```
+
+
+## Terraform
+
+### Commands
+```
+terraform init
+terraform plan
+terraform apply
+```
